@@ -212,6 +212,13 @@ class character:
         self.ngram = ngram
         self.abrev = abrev
         self.fullName = getFullName(abrev)
+        
+    @classmethod
+    def fromFile(self, file:str, abrev:str):
+        # print(file)
+        f = loadDialogue(file)
+        return character(f, abrev)
+
     def getRandomDialogue(self)->str:
         return getSoloDialogue(self.ngram, self.abrev)
     def talkToCharacter(self, character:Self) ->str:
@@ -224,11 +231,13 @@ class character:
 d = loadDialogue("./ngram/VS.json")
 s = loadDialogue("./ngram/TN.json")
 a = loadDialogue("./ngram/AM.json")
-c = character(s, "TN")
+# c = character(s, "TN")
+c = character.fromFile("./ngram/TN.json", "TN")
+# print(c.ngram)
 # print(c.abrev)
 c2 = character(d, "VS")
 c3 = character(a, "AM")
-print(getSoloDialogue(c2.ngram, "VS"))
+# print(getSoloDialogue(c.ngram, "VS"))
 getSimpleDialogue(c, c2, c3, iter=10)
 # if "TN" in c2.ngram:
 #     print("IT WORKS")
