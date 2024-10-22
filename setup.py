@@ -7,6 +7,7 @@ import random
 from odf.opendocument import load
 from odf.text import P
 from odf.element import Text
+from typing import Self
 
 def openODT(file):
     odt_doc = load(file)
@@ -90,7 +91,7 @@ def tokenize(text):
     tokens = text.split()
     # tokens = re.findall(r'\s*', text)
     return tokens
-def generateNgram(tokens):
+def generateNgram(tokens) ->json:
     # ngram_model = defaultdict(list)
     ngram_model = defaultdict(lambda: defaultdict(lambda:defaultdict(int)))
     # ngram_model = defaultdict(lambda: defaultdict(int))
@@ -132,7 +133,7 @@ def loadDialogue(file):
         data = json.load(file)
         return data
 
-def predict_next_word(speaker, listener, previous_word):
+def predict_next_word(speaker:json, listener:str, previous_word:str) ->str:
     #access the dictionaries key value pair
     next_word_frequencies = speaker[listener].get(previous_word, {})
     # print(next_word_frequencies)
@@ -151,18 +152,89 @@ def predict_next_word(speaker, listener, previous_word):
     next_word = random.choices(words, weights=weights, k=1)[0]
     return next_word
 
-def predictSentence(speaker, listener):
+def predictSentence(speakerNgram:json, listenerAbv:str) -> str:
     # ngram_model = loadNgram("nGram.json")
     # Example: predict the next word after "<s>"
     nextWord = "<s>"
     sentence = ""
     while not nextWord == "</s>":
         sentence += " " + nextWord
-        nextWord = predict_next_word(speaker, listener, nextWord)
+        nextWord = predict_next_word(speakerNgram, listenerAbv, nextWord)
         # print(nextWord)
     sentence = sentence[5:]
     return sentence
-print(getAbreviation(" davest rider"))
+def firstTimeSetup(): #sets up all the characters that are in the ODT directory
+    for file in os.listdir("charactersODT"):
+        name = file.split(".")[0]
+        ngram = singleSetup("./charactersODT/" + file)
+        saveDialogue(ngram, os.path.join("./ngram/", getAbreviation(name)+ ".json"))
+
+
+def singleSetup(file:str) ->json: #sets up a single character based on an odt file 
+    text = extractJSON(file)
+    token = tokenizeAll(text)
+    ngram = generateNgram(token)
+    return ngram
+
+def getDialogue(speakerNgram:json, speakerAbv:str, listenerAbv:str) -> str:
+    return getFullName(speakerAbv) + ": " + predictSentence(speakerNgram, listenerAbv)
+
+def dialogueOnce(speakerNgram:json, listenerNgram:json, speakerAbv:str, listenerAbv:str):
+    r = random.randint(1,2)
+    speakerConv = getAbreviation(speakerAbv) 
+    match r:
+        case 1:
+            return getDialogue(speakerNgram, speakerAbv, listenerAbv)
+        case 2:
+            return getDialogue(listenerNgram, listenerAbv, speakerAbv)
+        case _:
+            return None
+def getSimpleDialogue(*character, iter = None) ->None:
+    for x in range(0,len(character)-1):
+        for y in range(x+1, len(character)):
+            if character[y].abrev in character[x].ngram:
+                pass
+                #passes test i.e the character has dialogue with the other character
+            else:
+                raise Exception("Character doesn't have valid dialogue with each other " +  character[y].fullName + "and " + character[x].fullName)
+    if iter == None:
+        iter = len(character)
+    for x in range(iter):
+        r = random.randint(0, len(character)-1) # get talking character
+        l = random.choice([x for x in range(0, len(character)-1) if x != r]) # get listener character
+        print(getDialogue(character[r].ngram, character[r].abrev, character[l].abrev))
+def getSoloDialogue(speakerNgram:json, speakerAbv:str) ->str:
+    x = random.choice([x for x in speakerNgram])
+    
+    return getDialogue(speakerNgram, speakerAbv, x)
+class character:
+    def __init__(self, ngram:json, abrev:str):
+        self.ngram = ngram
+        self.abrev = abrev
+        self.fullName = getFullName(abrev)
+    def getRandomDialogue(self)->str:
+        return getSoloDialogue(self.ngram, self.abrev)
+    def talkToCharacter(self, character:Self) ->str:
+        return getDialogue(self.ngram, self.abrev, character.abrev)
+
+
+
+# def 
+# firstTimeSetup()
+d = loadDialogue("./ngram/VS.json")
+s = loadDialogue("./ngram/TN.json")
+a = loadDialogue("./ngram/AM.json")
+c = character(s, "TN")
+# print(c.abrev)
+c2 = character(d, "VS")
+c3 = character(a, "AM")
+print(getSoloDialogue(c2.ngram, "VS"))
+getSimpleDialogue(c, c2, c3, iter=10)
+# if "TN" in c2.ngram:
+#     print("IT WORKS")
+# for x in range(10):
+#     print(dialogueOnce(d, s, "VS", "TN"))
+# print(d.keys())
 # v =extractJSON("vriska serket.odt")
 # x = tokenizeAll(v)
 # test = (loadDialogue("TEST123.json"))
