@@ -228,17 +228,17 @@ class character:
 
 # def 
 # firstTimeSetup()
-d = loadDialogue("./ngram/VS.json")
-s = loadDialogue("./ngram/TN.json")
-a = loadDialogue("./ngram/AM.json")
+# d = loadDialogue("./ngram/VS.json")
+# s = loadDialogue("./ngram/TN.json")
+# a = loadDialogue("./ngram/AM.json")
 # c = character(s, "TN")
-c = character.fromFile("./ngram/TN.json", "TN")
+# c = character.fromFile("./ngram/TN.json", "TN")
 # print(c.ngram)
 # print(c.abrev)
-c2 = character(d, "VS")
-c3 = character(a, "AM")
+# c2 = character(d, "VS")
+# c3 = character(a, "AM")
 # print(getSoloDialogue(c.ngram, "VS"))
-getSimpleDialogue(c, c2, c3, iter=10)
+# getSimpleDialogue(c, c2, c3, iter=10)
 # if "TN" in c2.ngram:
 #     print("IT WORKS")
 # for x in range(10):
