@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from setup import character, getSimpleDialogue, loadDialogue, getAbreviation, getFullName
 from conversions import getFullName
 import json
@@ -8,8 +9,18 @@ from os import listdir
 # # print(d)
 # app = Flask(__name__)
 app = FastAPI()
+origins = [
+    "http://localhost:5173/",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-
+app.set
 @app.get('/api/acronym/{fn}')
 def getAcronym(fn):
     return getAbreviation(fn)
