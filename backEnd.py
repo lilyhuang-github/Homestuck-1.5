@@ -20,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.set
+
 @app.get('/api/acronym/{fn}')
 def getAcronym(fn):
     return getAbreviation(fn)
