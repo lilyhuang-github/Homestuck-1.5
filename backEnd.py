@@ -1,7 +1,9 @@
 from flask import Flask, jsonify
 from fastapi import FastAPI
 from setup import character, getSimpleDialogue, loadDialogue, getAbreviation, getFullName
+from conversions import getFullName
 import json
+from os import listdir
 # # d = loadDialogue(f'./ngram/TN.json')
 # # print(d)
 # app = Flask(__name__)
@@ -15,6 +17,19 @@ def getAcronym(fn):
 def getFullname(ac):
     acronym = ac.strip().upper()
     return getFullName(acronym)
+
+@app.get('/api/available')
+def getAvailableCharacters(): 
+    d = listdir("ngram")
+    characters = {}
+    for x in d:
+        abrev = x.split(".")[0]
+        characters[abrev] = getFullName(abrev)
+        # characters.append(x.split(".")[0])
+        # characters.splitappend(x)
+    return characters
+   
+
 
 @app.get('/api/character/{chr}')
 def get_data(chr):
