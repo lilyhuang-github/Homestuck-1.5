@@ -42,7 +42,7 @@ def getAvailableCharacters():
         # characters.splitappend(x)
     return characters
    
-
+#test
 
 @app.get('/api/character/{chr}')
 def get_data(chr):
