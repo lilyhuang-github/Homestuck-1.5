@@ -52,7 +52,7 @@ def extractJSON(file):
     #gets a list of the character's abbreviations
 
     # regex to find the line
-    regexp = re.compile("\..{2,4}: =", re.IGNORECASE)
+    regexp = re.compile(r'\..{2,4}: =', re.IGNORECASE)
     regexp2 = re.compile("[A-Z]{2,4}", re.IGNORECASE)    
     dict = defaultdict(list)
 
@@ -189,6 +189,8 @@ def dialogueOnce(speakerNgram:json, listenerNgram:json, speakerAbv:str, listener
             return getDialogue(listenerNgram, listenerAbv, speakerAbv)
         case _:
             return None
+# def getSimpleDialogue2(*character, iter = None):
+
 def getSimpleDialogue(*character, iter = None) ->None:
     for x in range(0,len(character)-1):
         for y in range(x+1, len(character)):
@@ -203,6 +205,8 @@ def getSimpleDialogue(*character, iter = None) ->None:
         r = random.randint(0, len(character)-1) # get talking character
         l = random.choice([x for x in range(0, len(character)-1) if x != r]) # get listener character
         print(getDialogue(character[r].ngram, character[r].abrev, character[l].abrev))
+
+
 def getSoloDialogue(speakerNgram:json, speakerAbv:str) ->str:
     x = random.choice([x for x in speakerNgram])
     
@@ -219,16 +223,51 @@ class character:
         f = loadDialogue(file)
         return character(f, abrev)
 
+        #character if they talked to themselves
     def getRandomDialogue(self)->str:
         return getSoloDialogue(self.ngram, self.abrev)
+    
+    #character talking to another character
     def talkToCharacter(self, character:Self) ->str:
         return getDialogue(self.ngram, self.abrev, character.abrev)
-
+    
+    #character talking back and forth with another character
+    def talkToCharacterBackForth(self, character, iter=5):
+        dialogue = ""
+        for x in range(iter):
+            r = random.randint(0,1)
+            if r == 1:
+                dialogue += f'{character.talkToCharacter(self)}\n'
+            else:
+                dialogue += f'{self.talkToCharacter(character)}\n'
+        return dialogue
+    
+    #talk to any number of characters
+    def talkToAnyCharacters(self, *characters, iter=5):
+        dialogue = ""
+        # print(characters[0])
+        for x in range(iter):
+            r = random.randint(0, len(characters))
+            # print(r)
+            # print([x for x in range(0,len(characters)+1)])
+            l = random.choice([x for x in range(0, len(characters)+1) if x != r])
+            # print(f'r: {r} , l:{l}')
+            if r ==0 or l ==0:
+                if r ==0:
+                    dialogue += f'{self.talkToCharacter(characters[l-1])}\n'
+                if l ==0:
+                    dialogue += f'{characters[r-1].talkToCharacter(self)}\n'
+            else:
+                dialogue += f'{characters[r-1].talkToCharacter(characters[l-1])}\n'
+        return dialogue
+    
 
 
 # def 
 # firstTimeSetup()
 # d = loadDialogue("./ngram/VS.json")
+# getSimpleDialogue(d)
+# d.getRandomDialogue()
 # s = loadDialogue("./ngram/TN.json")
 # a = loadDialogue("./ngram/AM.json")
 # c = character(s, "TN")
@@ -236,7 +275,15 @@ class character:
 # print(c.ngram)
 # print(c.abrev)
 # c2 = character(d, "VS")
-# c3 = character(a, "AM")
+# print(c2.getRandomDialogue())
+# c1 = character(a, "AM")
+# c3 = character(s, "TN")
+# print(c2.talkToAnyCharacters(c3, c1, iter=10))
+# print(c2.talkToCharacterBackForth(c3))
+# print(c2.talkToCharacter(c3))
+# print(c3.talkToCharacter(c2))
+# print(c3.getRandomDialogue())
+# getSimpleDialogue((c2,c3))
 # print(getSoloDialogue(c.ngram, "VS"))
 # getSimpleDialogue(c, c2, c3, iter=10)
 # if "TN" in c2.ngram:
