@@ -262,11 +262,11 @@ class character:
         return dialogue
     
 
-# firstTimeSetup()
+firstTimeSetup()
 # def 
 # firstTimeSetup()
-t = loadDialogue("./ngram/TP.json")
-c4 = character(t, "TP")
+# t = loadDialogue("./ngram/TP.json")
+# c4 = character(t, "TP")
 # print(c4.getRandomDialogue())
 # d = loadDialogue("./ngram/VS.json")
 # getSimpleDialogue(d)
