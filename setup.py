@@ -262,7 +262,7 @@ class character:
         return dialogue
     
 
-# firstTimeSetup()
+firstTimeSetup()
 # def 
 # firstTimeSetup()
 # d = loadDialogue("./ngram/VS.json")
