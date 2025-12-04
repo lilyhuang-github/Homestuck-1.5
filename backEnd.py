@@ -1,4 +1,3 @@
-from flask import Flask, jsonify
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from setup import character, getSimpleDialogue, loadDialogue, getAbreviation, getFullName
